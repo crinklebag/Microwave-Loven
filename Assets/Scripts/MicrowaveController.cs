@@ -13,6 +13,8 @@ public class MicrowaveController : MonoBehaviour {
     [SerializeField] GameObject timer;
     [SerializeField] Image forceBar;
     [SerializeField] MeshRenderer[] meshes;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip[] audioClips;
 
     [Header("Object Variables")]
     [SerializeField] float maxForce = 10;
@@ -48,6 +50,8 @@ public class MicrowaveController : MonoBehaviour {
         // If it is a pickup object, and it is being thrown and it has not been thrown by you...
         if (other.gameObject.CompareTag("Pickup") && other.gameObject.GetComponent<Pickup>().IsProjectile() && 
             other.gameObject.GetComponent<Pickup>().GetOwnerID() != this.GetComponent<MicrowaveInput>().GetPlayerID()) {
+            audioSource.clip = audioClips[6];
+            audioSource.Play();
             StartCoroutine("StunPlayer");
             throwForce = 10;
             ThrowObject();
@@ -78,6 +82,9 @@ public class MicrowaveController : MonoBehaviour {
             StartCoroutine("Countdown");
         } else {
             cookTimeUI.text = "Done!";
+            audioSource.loop = false;
+            audioSource.clip = audioClips[2];
+            audioSource.Play();
         }
     }
 
@@ -138,6 +145,7 @@ public class MicrowaveController : MonoBehaviour {
 
         // Increasing Force
         if (throwForce < maxForce) {
+            Debug.Log("Growing");
             throwForce += 0.3f;
         }
 
@@ -149,6 +157,11 @@ public class MicrowaveController : MonoBehaviour {
         
         if (heldPickup == null && !stunned) {
             // Debug.Log("Picking Up Object");
+            // Start the audio
+            audioSource.clip = audioClips[4];
+            audioSource.loop = true;
+            audioSource.Play();
+
             HandlePickup(newPickup);
             cookTime = heldPickup.GetComponent<Pickup>().GetCookTime();
             DisplayTime();
@@ -160,10 +173,15 @@ public class MicrowaveController : MonoBehaviour {
 
         forceBar.gameObject.SetActive(false);
         forceBar.transform.GetChild(0).GetComponent<Image>().fillAmount = 0;
+        // throwForce = minForce;
 
         if (heldPickup != null) {
             // Debug.Log("Throwing Food");
             // Handle the timer
+            audioSource.loop = false;
+            audioSource.clip = audioClips[1];
+            audioSource.Play();
+
             StopCoroutine("Countdown");
             HideTime();
             HandleThrow();

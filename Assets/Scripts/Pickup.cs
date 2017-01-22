@@ -11,6 +11,7 @@ public class Pickup : MonoBehaviour {
 
     [Header("Object References")]
     [SerializeField] Text cookTimeUI;
+    [SerializeField] AudioSource audioSource;
 
     [Header("Object Variables")]
     [SerializeField] PickupType type;
@@ -43,6 +44,8 @@ public class Pickup : MonoBehaviour {
             if (projectile) {
                 projectile = false;
             }
+        } else if (other.gameObject.CompareTag("Player") && projectile == true)  {
+            audioSource.Play();
         }
     }
 

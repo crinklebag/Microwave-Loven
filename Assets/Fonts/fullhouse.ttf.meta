@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 800df795b81dd4f4398ca4a9e381500d
+timeCreated: 1485104671
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Full-House20
+  fontNames:
+  - Full-House20
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour {
     [SerializeField] GameObject EndPanel;
     [SerializeField] Text playerWinText;
     [SerializeField] Text playerLoseText;
+    [SerializeField] GameObject[] credits;
+    [SerializeField] GameObject logo;
 
     [Header("Object Variables")]
     [SerializeField] float minCookTime;
@@ -23,6 +25,8 @@ public class GameController : MonoBehaviour {
     [SerializeField] float minZ;
 
     int objectCount = 0;
+    int creditCounter = 0;
+    int creditWaitTime = 0;
     float waitTime = 0;
     bool gameOver = false;
     bool gameStarted = false;
@@ -30,12 +34,13 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         StartCoroutine("SpawnObjects");
+        StartCoroutine("RollCredits");
 	}
 	
     void CreateFoodItem() {
         // Choose random values for the fill and cook time for the new item
         float randCookTime = Random.Range(minCookTime, maxCookTime);
-        float randFillValue = randCookTime * 0.1f;
+        float randFillValue = randCookTime * 0.05f;
         // Choose a random location
         Vector3 newLocation = new Vector3(Random.Range(minX, maxX), 5, Random.Range(minZ, maxZ));
         GameObject newFoodItem = Instantiate(foodPrefab, newLocation, Quaternion.identity) as GameObject;
@@ -57,6 +62,25 @@ public class GameController : MonoBehaviour {
         StartCoroutine("SpawnObjects");
     }
 
+    IEnumerator RollCredits() {
+        yield return new WaitForSeconds(creditWaitTime);
+
+        // Set credit wait time to 3 seconds
+        creditWaitTime = 2;
+        // Turn on the instruction
+        credits[creditCounter].SetActive(true);
+        if (creditCounter != 0) { credits[creditCounter - 1].SetActive(false); }
+        // If there are more to be shown - show the next one and hide the last
+        if (creditCounter < credits.Length - 1) {
+            creditCounter++;
+            StartCoroutine("RollCredits");
+        }
+        else {
+            credits[creditCounter].SetActive(false);
+            logo.SetActive(true);
+        }
+    }
+
     public void DecreaseObjectCount() {
         objectCount--;
     }
@@ -65,6 +89,7 @@ public class GameController : MonoBehaviour {
         if (!gameOver) {
             gameOver = true;
             EndPanel.SetActive(true);
+            logo.SetActive(false);
 
             if (winningPlayer == 0) {
                 playerWinText.text = "Player 1";

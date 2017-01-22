@@ -9,6 +9,8 @@ public class Target : MonoBehaviour {
 
     [SerializeField] Image fillUI;
     [SerializeField] int teamNum;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip winAudio;
 
     float fillAmount = 0;
 
@@ -24,7 +26,13 @@ public class Target : MonoBehaviour {
             Destroy(other.gameObject);
             gameController.DecreaseObjectCount();
 
-            if (fillAmount >= 1) { gameController.EndGame(teamNum); }
+            audioSource.Play();
+
+            if (fillAmount >= 1) {
+                gameController.EndGame(teamNum);
+                audioSource.clip = winAudio;
+                audioSource.Play();
+            }
         }
     }
 }
