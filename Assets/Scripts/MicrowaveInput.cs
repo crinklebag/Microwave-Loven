@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(MicrowaveController))]
 public class MicrowaveInput : MonoBehaviour {
-    
+
+    GameController gameController;
+
     [SerializeField] int playerID;
     Player player;
-
-    Pickup heldPickup;
 
 	// Use this for initialization
 	void Start () {
         player = ReInput.players.GetPlayer(playerID);
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
 	}
 	
 	// Update is called once per frame
@@ -41,10 +44,26 @@ public class MicrowaveInput : MonoBehaviour {
             moveDirection += new Vector3(0, 0, -0.1f);
         }
 
+        // Throw
+        if (player.GetButton("A Button")) {
+            Debug.Log("Holding Button");
+            this.GetComponent<MicrowaveController>().IncreaseForce();
+        }
+
+        if (player.GetButtonUp("A Button")) {
+            Debug.Log("Release Button");
+            this.GetComponent<MicrowaveController>().ThrowObject();
+        }
+
+        if (player.GetButtonDown("A Button") && gameController.IsOver()) {
+            SceneManager.LoadScene(0);
+        }
+
         if (moveDirection != Vector3.zero) {
 
             this.GetComponent<Rigidbody>().MovePosition(this.transform.position + moveDirection);
         }
+
         RotateMicrowave();
 	}
 
@@ -59,11 +78,7 @@ public class MicrowaveInput : MonoBehaviour {
         }
     }
 
-    void ThrowObject() {
-        // Collect Forces the longer the A button is being held
-    }
-
-    public void PickupObject(Pickup newObject) {
-        heldPickup = newObject;
+    public int GetPlayerID() {
+        return playerID;
     }
 }
